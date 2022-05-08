@@ -1,5 +1,7 @@
 from random import randint
 import requests
+import io
+from PIL import Image
 
 
 def get_json(url):  # retourne le json d'une page à partir de son url
@@ -61,11 +63,20 @@ def get_meal_name(json):  # retourne le nom d'une recette en prenant son json en
     return name
 
 
+def get_meal_image(json):  # retourne l'image d'une recette en prenant son json en paramètre
+    image_url = json["strMealThumb"]
+    response = requests.get(image_url)
+    image_bytes = io.BytesIO(response.content)
+    img = Image.open(image_bytes)
+    img.show()
+
+
 def display_meal(idMeal):  # affiche une recette en fonction de son id
     json = get_json_id(idMeal)
     instructions = get_instruction(json)
     ingredients = get_ingredients(json)
     name = get_meal_name(json)
+    get_meal_image(json)
 
     print("""\n=========================== """ + name + """ ============================ \n\nYou will need : \n""")
     for i in ingredients.items():
